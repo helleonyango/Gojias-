@@ -1,0 +1,65 @@
+{{define "fabric-card"}}
+<article class="card">
+  <a class="card-media" href="/fabrics/{{.Slug}}">
+    <img src="{{.Image}}" alt="{{.Name}} — {{.TypeLabel}} fabric in {{.Colours}}" loading="lazy" width="600" height="750">
+    {{if not .InStock}}<span class="badge badge-out">Out of stock</span>{{end}}
+    {{if and .Featured .InStock}}<span class="badge badge-featured">Featured</span>{{end}}
+  </a>
+  <div class="card-body">
+    <p class="card-kicker">{{.TypeLabel}}</p>
+    <h3 class="card-title"><a href="/fabrics/{{.Slug}}">{{.Name}}</a></h3>
+    <p class="colour-dots" aria-label="Colours: {{.Colours}}">
+      {{range .ColourList}}<span class="dot" style="background:{{swatch .}}" title="{{.}}"></span>{{end}}
+    </p>
+    <div class="card-foot">
+      <p class="price">{{money .Price}} <span>/ {{.Unit}}</span></p>
+      <a class="link-arrow" href="/fabrics/{{.Slug}}">View</a>
+    </div>
+  </div>
+</article>
+{{end}}
+
+{{define "design-card"}}
+<article class="card">
+  <a class="card-media" href="/designs/{{.Slug}}">
+    <img src="{{.Image}}" alt="{{.Name}} — {{.CategoryLabel}} design" loading="lazy" width="600" height="750">
+    <span class="badge badge-soft">{{.CategoryLabel}}</span>
+  </a>
+  <div class="card-body">
+    <p class="card-kicker">{{.ProductionDays}} days to sew</p>
+    <h3 class="card-title"><a href="/designs/{{.Slug}}">{{.Name}}</a></h3>
+    <div class="card-foot">
+      <p class="price">from {{money .PriceFrom}}</p>
+      <a class="link-arrow" href="/designs/{{.Slug}}">View</a>
+    </div>
+  </div>
+</article>
+{{end}}
+
+{{define "pager"}}
+{{if gt .TotalPages 1}}
+<nav class="pager" aria-label="Pagination">
+  {{if .HasPrev}}
+    <a class="pager-btn" href="{{.Prev}}" rel="prev">Prev</a>
+  {{else}}
+    <span class="pager-btn is-disabled">Prev</span>
+  {{end}}
+  {{range .Links}}
+    <a class="pager-btn{{if .Active}} is-active{{end}}" href="{{.URL}}"{{if .Active}} aria-current="page"{{end}}>{{.Num}}</a>
+  {{end}}
+  {{if .HasNext}}
+    <a class="pager-btn" href="{{.Next}}" rel="next">Next</a>
+  {{else}}
+    <span class="pager-btn is-disabled">Next</span>
+  {{end}}
+</nav>
+{{end}}
+{{end}}
+
+{{define "empty-state"}}
+<div class="empty-state">
+  <h3>Nothing matches those filters</h3>
+  <p>Try a wider price range or a different fabric family — or clear the filters and start again.</p>
+  <a class="btn btn-primary" href="{{.}}">Clear filters</a>
+</div>
+{{end}}
