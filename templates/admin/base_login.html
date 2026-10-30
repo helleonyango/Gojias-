@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{{.Title}} · Gojias Collections admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/admin.css">
+  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+</head>
+<body class="admin-login-body">
+  <div class="admin-login-wrap">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true">GC</span>
+      <span class="brand-text"><strong>Gojias</strong><em>Collections</em></span>
+    </a>
+
+    {{template "content" .}}
+
+    <p class="admin-login-foot">Staff area · <a href="/">back to the shop</a></p>
+  </div>
+</body>
+</html>

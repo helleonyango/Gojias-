@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{{.Title}} · Gojias Collections admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/admin.css">
+  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+</head>
+<body class="admin-body">
+  <a class="skip-link" href="#admin-main">Skip to content</a>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <a class="brand brand-light" href="/admin">
+        <span class="brand-mark" aria-hidden="true">GC</span>
+        <span class="brand-text"><strong>Gojias</strong><em>Collections</em></span>
+      </a>
+
+      <nav class="admin-nav" aria-label="Dashboard">
+        <a href="/admin"{{if eq .Active "dashboard"}} class="is-active" aria-current="page"{{end}}>Dashboard</a>
+        <a href="/admin/orders"{{if eq .Active "orders"}} class="is-active" aria-current="page"{{end}}>Orders</a>
+        <a href="/admin/fabrics"{{if eq .Active "fabrics"}} class="is-active" aria-current="page"{{end}}>Fabrics</a>
+        <a href="/admin/designs"{{if eq .Active "designs"}} class="is-active" aria-current="page"{{end}}>Designs</a>
+        <a href="/admin/settings"{{if eq .Active "settings"}} class="is-active" aria-current="page"{{end}}>Settings</a>
+      </nav>
+
+      <div class="admin-sidebar-foot">
+        <a href="/" target="_blank" rel="noopener">View the shop &rarr;</a>
+        <form method="post" action="/admin/logout">
+          <input type="hidden" name="csrf" value="{{.CSRF}}">
+          <button class="linklike" type="submit">Sign out</button>
+        </form>
+        <p>{{.Email}}</p>
+      </div>
+    </aside>
+
+    <main class="admin-main" id="admin-main">
+      <div class="admin-topbar">
+        <h1>{{.Title}}</h1>
+      </div>
+
+      {{if .Flash}}<div class="admin-flash" role="status">{{.Flash}}</div>{{end}}
+      {{if .Error}}<div class="admin-flash admin-flash-error" role="alert">{{.Error}}</div>{{end}}
+
+      {{template "content" .}}
+    </main>
+  </div>
+</body>
+</html>
