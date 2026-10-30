@@ -1,0 +1,56 @@
+{{define "content"}}
+<form class="admin-filters" method="get" action="/admin/fabrics">
+  <div class="field" style="min-width:260px">
+    <label for="fq">Search fabrics</label>
+    <input id="fq" type="search" name="q" value="{{.Data.Query}}" placeholder="name or type">
+  </div>
+  <button class="btn btn-primary btn-sm" type="submit">Search</button>
+  <a class="btn btn-quiet btn-sm" href="/admin/fabrics">Reset</a>
+  <a class="btn btn-gold btn-sm" href="/admin/fabrics/new" style="margin-left:auto">+ Add fabric</a>
+</form>
+
+<p class="help-text">{{.Data.Total}} fabric{{if ne .Data.Total 1}}s{{end}}.</p>
+
+{{if .Data.Fabrics}}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr><th></th><th>Name</th><th>Type</th><th>Price</th><th>Stock</th><th>Featured</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {{range .Data.Fabrics}}
+      <tr>
+        <td><img class="thumb-sm" src="{{.Image}}" alt=""></td>
+        <td><a href="/fabrics/{{.Slug}}" target="_blank" rel="noopener">{{.Name}}</a><br><span class="help-text">/{{.Slug}}</span></td>
+        <td>{{.TypeLabel}}</td>
+        <td>{{money .Price}}<br><span class="help-text">per {{.Unit}}</span></td>
+        <td><span class="pill {{if .InStock}}pill-ready{{else}}pill-out{{end}}">{{if .InStock}}In stock{{else}}Out of stock{{end}}</span></td>
+        <td>{{if .Featured}}<span class="pill pill-featured">Featured</span>{{else}}<span class="help-text">—</span>{{end}}</td>
+        <td>
+          <div class="row-actions">
+            <a class="btn btn-outline btn-xs" href="/admin/fabrics/{{.ID}}/edit">Edit</a>
+            <form method="post" action="/admin/fabrics/{{.ID}}/toggle">
+              <input type="hidden" name="csrf" value="{{$.CSRF}}">
+              <input type="hidden" name="field" value="stock">
+              <button class="btn btn-quiet btn-xs" type="submit">{{if .InStock}}Mark out{{else}}Restock{{end}}</button>
+            </form>
+            <form method="post" action="/admin/fabrics/{{.ID}}/toggle">
+              <input type="hidden" name="csrf" value="{{$.CSRF}}">
+              <input type="hidden" name="field" value="featured">
+              <button class="btn btn-quiet btn-xs" type="submit">{{if .Featured}}Unfeature{{else}}Feature{{end}}</button>
+            </form>
+            <form method="post" action="/admin/fabrics/{{.ID}}/delete" onsubmit="return confirm('Delete {{.Name}}? This cannot be undone.');">
+              <input type="hidden" name="csrf" value="{{$.CSRF}}">
+              <button class="btn btn-danger btn-xs" type="submit">Delete</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{else}}
+<div class="panel"><p class="help-text">No fabrics match that search.</p></div>
+{{end}}
+{{end}}
