@@ -1,0 +1,149 @@
+{{define "content"}}
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Made in Kisumu · Kitenge &amp; Ankara</p>
+      <h1>African elegance,<br><em>tailored to you</em></h1>
+      <p class="lede">We design and sew attire inspired by kitenge — printed cloth, hand-finished seams, cut to your own measurements. Choose the fabric, choose the design, and we do the rest.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/fabrics">Browse Fabrics</a>
+        <a class="btn btn-outline" href="/designs">View Designs</a>
+        <a class="btn btn-quiet" href="/order">Order Now &rarr;</a>
+      </div>
+      <ul class="hero-facts">
+        <li><strong>10 days</strong><span>typical turnaround</span></li>
+        <li><strong>4 fittings</strong><span>on bridal pieces</span></li>
+        <li><strong>Kisumu</strong><span>pickup or delivery</span></li>
+      </ul>
+    </div>
+    <div class="hero-art">
+      <img src="/static/img/hero.svg" alt="Kitenge print in terracotta, gold and indigo" width="720" height="900">
+      <span class="hero-stamp">Est. 2019<br>Kisumu</span>
+    </div>
+  </div>
+  <div class="pattern-strip" aria-hidden="true"></div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">How it works</p>
+      <h2>Four steps from cloth to finished outfit</h2>
+    </header>
+    <ol class="steps">
+      <li>
+        <span class="step-num">01</span>
+        <h3>Choose a fabric</h3>
+        <p>Browse kitenge, Ankara, lace or plain cotton. Each listing shows the width, colours and price per yard or metre.</p>
+      </li>
+      <li>
+        <span class="step-num">02</span>
+        <h3>Pick a design</h3>
+        <p>Start from a ready-made style, or bring an inspiration photo and we will draft the pattern with you.</p>
+      </li>
+      <li>
+        <span class="step-num">03</span>
+        <h3>Enter measurements</h3>
+        <p>Use our guided measuring form with a cm/inches toggle, or book a fitting at the workshop.</p>
+      </li>
+      <li>
+        <span class="step-num">04</span>
+        <h3>We sew and deliver</h3>
+        <p>Follow every stage from cutting to sewing, then collect in Kisumu or have it delivered.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+{{if .Data.Designs}}
+<section class="section section-tint">
+  <div class="container">
+    <header class="section-head section-head-row">
+      <div>
+        <p class="eyebrow">Featured designs</p>
+        <h2>Pieces we are proud of this season</h2>
+      </div>
+      <a class="link-arrow link-lg" href="/designs">All designs</a>
+    </header>
+    <div class="grid grid-3">
+      {{range .Data.Designs}}{{template "design-card" .}}{{end}}
+    </div>
+  </div>
+</section>
+{{end}}
+
+{{if .Data.Fabrics}}
+<section class="section">
+  <div class="container">
+    <header class="section-head section-head-row">
+      <div>
+        <p class="eyebrow">Featured fabrics</p>
+        <h2>Cloth worth building a wardrobe around</h2>
+      </div>
+      <a class="link-arrow link-lg" href="/fabrics">All fabrics</a>
+    </header>
+    <div class="grid grid-4">
+      {{range .Data.Fabrics}}{{template "fabric-card" .}}{{end}}
+    </div>
+  </div>
+</section>
+{{end}}
+
+<section class="section section-tint">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Why choose us</p>
+      <h2>Clothes that fit the person, not the size chart</h2>
+    </header>
+    <div class="grid grid-4 features">
+      <article class="feature">
+        <h3>A tailored fit</h3>
+        <p>Every order is cut to your measurements. We adjust at the fitting rather than asking you to adjust to the garment.</p>
+      </article>
+      <article class="feature">
+        <h3>Quality fabric</h3>
+        <p>We buy wax cloth and lace in small bolts from suppliers we visit ourselves, and we tell you honestly what wears well.</p>
+      </article>
+      <article class="feature">
+        <h3>Custom orders</h3>
+        <p>Bring a photo, a sketch or just an idea. Couples, families and bridal parties are our favourite briefs.</p>
+      </article>
+      <article class="feature">
+        <h3>Delivery</h3>
+        <p>Pickup from the Kisumu workshop, or courier countrywide. We confirm the timeline before you pay a deposit.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">In their words</p>
+      <h2>What our clients say</h2>
+    </header>
+    <div class="grid grid-3">
+      {{range .Data.Testimonials}}
+      <figure class="testimonial">
+        <blockquote>{{.Quote}}</blockquote>
+        <figcaption><strong>{{.Name}}</strong><span>{{.Role}}</span></figcaption>
+      </figure>
+      {{end}}
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="container cta-inner">
+    <div>
+      <p class="eyebrow eyebrow-light">Ready when you are</p>
+      <h2>Ready for your custom outfit?</h2>
+      <p>Bring a fabric, a design, or both — we will quote you before any cloth is cut.</p>
+    </div>
+    <div class="cta-actions">
+      <a class="btn btn-gold" href="/order">Start your order</a>
+      <a class="btn btn-outline-light" href="{{wa "Hello Gojias Collections, I would like a quote for a custom outfit."}}" target="_blank" rel="noopener">Ask on WhatsApp</a>
+    </div>
+  </div>
+</section>
+{{end}}

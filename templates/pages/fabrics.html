@@ -1,0 +1,80 @@
+{{define "content"}}
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Fabrics</span></nav>
+    <h1>Our fabrics</h1>
+    <p class="lede">Kitenge, Ankara, lace and plain cotton, sold by the yard or the metre. Prices in Kenyan shillings, stock updated as bolts sell out.</p>
+  </div>
+</section>
+
+<section class="section section-flush">
+  <div class="container">
+    <form class="filters" method="get" action="/fabrics" role="search">
+      <div class="filter-field filter-search">
+        <label for="f-q">Search</label>
+        <input id="f-q" type="search" name="q" value="{{.Data.Filter.Query}}" placeholder="e.g. indigo bloom" autocomplete="off">
+      </div>
+
+      <div class="filter-field">
+        <label for="f-type">Type</label>
+        <select id="f-type" name="type">
+          <option value="">All types</option>
+          {{range .Data.Types}}
+            <option value="{{.}}"{{if eq . $.Data.Filter.Type}} selected{{end}}>{{.}}</option>
+          {{end}}
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="f-colour">Colour</label>
+        <select id="f-colour" name="colour">
+          <option value="">Any colour</option>
+          {{range .Data.Colours}}
+            <option value="{{.}}"{{if eq . $.Data.Filter.Colour}} selected{{end}}>{{.}}</option>
+          {{end}}
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="f-max">Max price (KES)</label>
+        <input id="f-max" type="number" name="max" min="0" step="100" value="{{if .Data.Filter.MaxPrice}}{{printf "%.0f" .Data.Filter.MaxPrice}}{{end}}" placeholder="any">
+      </div>
+
+      <div class="filter-field">
+        <label for="f-sort">Sort</label>
+        <select id="f-sort" name="sort">
+          <option value="newest"{{if or (eq .Data.Filter.Sort "") (eq .Data.Filter.Sort "newest")}} selected{{end}}>Newest first</option>
+          <option value="price-asc"{{if eq .Data.Filter.Sort "price-asc"}} selected{{end}}>Price: low to high</option>
+          <option value="price-desc"{{if eq .Data.Filter.Sort "price-desc"}} selected{{end}}>Price: high to low</option>
+          <option value="name"{{if eq .Data.Filter.Sort "name"}} selected{{end}}>Name A–Z</option>
+        </select>
+      </div>
+
+      <div class="filter-field filter-check">
+        <label class="checkbox">
+          <input type="checkbox" name="stock" value="in"{{if .Data.Filter.InStockOnly}} checked{{end}}>
+          <span>In stock only</span>
+        </label>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-primary btn-sm" type="submit">Apply</button>
+        {{if .Data.QuerySome}}<a class="btn btn-quiet btn-sm" href="/fabrics">Clear</a>{{end}}
+      </div>
+    </form>
+
+    <p class="result-count">
+      {{if .Data.Total}}{{.Data.Pager.From}}–{{.Data.Pager.To}} of {{.Data.Total}} fabric{{if ne .Data.Total 1}}s{{end}}{{else}}No fabrics found{{end}}
+    </p>
+
+    {{if .Data.Fabrics}}
+      <div class="grid grid-3">
+        {{range .Data.Fabrics}}{{template "fabric-card" .}}{{end}}
+      </div>
+      {{template "pager" .Data.Pager}}
+    {{else}}
+      {{template "empty-state" "/fabrics"}}
+    {{end}}
+  </div>
+</section>
+{{end}}
