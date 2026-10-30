@@ -1,0 +1,291 @@
+{{define "content"}}
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Start your order</span></nav>
+    <h1>Start your order</h1>
+    <p class="lede">Five short steps. Nothing is sent until you review, and you can go back at any point.</p>
+  </div>
+</section>
+
+<section class="section section-flush">
+  <div class="container order-shell">
+
+    {{if .Data.Errors}}
+      <div class="alert alert-error" role="alert">
+        <strong>Please check a few details.</strong>
+        <ul>
+          {{range $field, $msg := .Data.Errors}}<li>{{$msg}}</li>{{end}}
+        </ul>
+      </div>
+    {{end}}
+
+    <ol class="wizard-progress" id="wizard-progress" data-error-step="{{.Data.ErrorStep}}" aria-label="Order progress">
+      <li data-step="1"><span class="wp-num">1</span><span class="wp-label">Design</span></li>
+      <li data-step="2"><span class="wp-num">2</span><span class="wp-label">Fabric</span></li>
+      <li data-step="3"><span class="wp-num">3</span><span class="wp-label">Measurements</span></li>
+      <li data-step="4"><span class="wp-num">4</span><span class="wp-label">Your details</span></li>
+      <li data-step="5"><span class="wp-num">5</span><span class="wp-label">Review</span></li>
+    </ol>
+
+    <noscript>
+      <div class="alert">
+        This order form needs JavaScript to move between steps and switch measurements by category.
+        Please enable it, or <a href="{{wa "Hello Gojias Collections, I would like to place an order."}}" target="_blank" rel="noopener">send us your order on WhatsApp</a> and we will take the details there.
+      </div>
+    </noscript>
+
+    <form id="order-form" method="post" action="/order" enctype="multipart/form-data" novalidate>
+
+      <!-- Step 1: design -->
+      <fieldset class="wizard-step" data-step="1">
+        <legend>Step 1 of 5 — Choose a design</legend>
+        <p class="step-hint">Start from one of our designs, or bring your own idea. You can change your mind later.</p>
+
+        <div class="choice-grid choice-grid-tight">
+          {{range .Data.Designs}}
+          <label class="choice">
+            <input type="radio" name="design" value="{{.Slug}}"
+              {{if eq (get $.Data.Values "design") .Slug}}checked{{end}}>
+            <span class="choice-body">
+              <img src="{{.Image}}" alt="{{.Name}} — {{.CategoryLabel}}" loading="lazy" width="300" height="375">
+              <span class="choice-kicker">{{.CategoryLabel}}</span>
+              <strong>{{.Name}}</strong>
+              <span class="choice-price">from {{money .PriceFrom}}</span>
+            </span>
+          </label>
+          {{end}}
+
+          <label class="choice choice-custom">
+            <input type="radio" name="design" value="custom"
+              {{if eq (get $.Data.Values "design") "custom"}}checked{{end}}>
+            <span class="choice-body">
+              <span class="choice-icon" aria-hidden="true">&#9998;</span>
+              <strong>My own idea</strong>
+              <span class="choice-price">Upload inspiration</span>
+            </span>
+          </label>
+        </div>
+        <p class="field-error field-error-block">{{index .Data.Errors "design"}}</p>
+
+        <div class="custom-fields" id="custom-fields">
+          <div class="field">
+            <label for="custom-category">Who is the outfit for?</label>
+            <select id="custom-category" name="category">
+              <option value="">Choose one</option>
+              {{$cat := get .Data.Values "category"}}
+              {{range .Data.Categories}}
+                <option value="{{.}}"{{if eq . $cat}} selected{{end}}>{{.}}</option>
+              {{end}}
+            </select>
+          </div>
+          <div class="field">
+            <label for="custom-description">Describe your idea</label>
+            <textarea id="custom-description" name="custom_description" rows="3" maxlength="600"
+              placeholder="e.g. A fitted kitenge gown with a high slit and gold piping, for a wedding in December.">{{get .Data.Values "custom_description"}}</textarea>
+            <p class="field-error">{{index .Data.Errors "custom_description"}}</p>
+          </div>
+          <div class="field">
+            <label for="inspiration">Inspiration photo <span class="hint-inline">optional, JPG/PNG/WebP up to 5 MB</span></label>
+            <input id="inspiration" type="file" name="inspiration" accept="image/jpeg,image/png,image/webp">
+            <p class="field-error">{{index .Data.Errors "inspiration"}}</p>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Step 2: fabric -->
+      <fieldset class="wizard-step" data-step="2" hidden>
+        <legend>Step 2 of 5 — Choose a fabric</legend>
+        <p class="step-hint">Prices are per yard or metre. We estimate the yardage for you — change it if you already know what your design needs.</p>
+
+        <div class="choice-grid choice-grid-fabric">
+          {{range .Data.Fabrics}}
+          <label class="choice{{if not .InStock}} is-unavailable{{end}}">
+            <input type="radio" name="fabric" value="{{.Slug}}"
+              {{if not .InStock}}disabled{{end}}
+              {{if eq (get $.Data.Values "fabric") .Slug}}checked{{end}}>
+            <span class="choice-body">
+              <img src="{{.Image}}" alt="{{.Name}} fabric" loading="lazy" width="300" height="375">
+              <strong>{{.Name}}</strong>
+              <span class="choice-price">{{money .Price}} / {{.Unit}}</span>
+              {{if not .InStock}}<span class="choice-flag">Out of stock</span>{{end}}
+            </span>
+          </label>
+          {{end}}
+
+          <label class="choice choice-custom">
+            <input type="radio" name="fabric" value="own"
+              {{if eq (get $.Data.Values "fabric") "own"}}checked{{end}}>
+            <span class="choice-body">
+              <span class="choice-icon" aria-hidden="true">&#9986;</span>
+              <strong>I'll bring my own fabric</strong>
+              <span class="choice-price">No fabric charge</span>
+            </span>
+          </label>
+        </div>
+        <p class="field-error field-error-block">{{index .Data.Errors "fabric"}}</p>
+
+        <div class="yardage-row">
+          <div class="field">
+            <label for="yardage">Estimated quantity</label>
+            <input id="yardage" type="number" name="yardage" min="0.5" max="40" step="0.5"
+              value="{{get .Data.Values "yardage"}}" placeholder="e.g. 4">
+            <p class="field-error">{{index .Data.Errors "yardage"}}</p>
+          </div>
+          <p class="yardage-note" id="yardage-note">We will confirm the exact yardage before cutting, and tell you if it changes.</p>
+        </div>
+
+        <p class="estimate-line" id="estimate-line" aria-live="polite"></p>
+      </fieldset>
+
+      <!-- Step 3: measurements -->
+      <fieldset class="wizard-step" data-step="3" hidden>
+        <legend>Step 3 of 5 — Your measurements</legend>
+        <p class="step-hint">Measure over light clothing, keep the tape snug but not tight, and ask someone to help where you can.</p>
+
+        <div class="unit-toggle" role="radiogroup" aria-label="Measurement unit">
+          <label class="unit-option">
+            <input type="radio" name="unit" value="cm" {{if ne (get .Data.Values "unit") "in"}}checked{{end}}>
+            <span>Centimetres</span>
+          </label>
+          <label class="unit-option">
+            <input type="radio" name="unit" value="in" {{if eq (get .Data.Values "unit") "in"}}checked{{end}}>
+            <span>Inches</span>
+          </label>
+        </div>
+
+        {{range .Data.Groups}}
+        {{$group := .}}
+        <div class="measure-group" data-category="{{.Category}}" hidden>
+          <p class="group-note">{{.Note}}</p>
+          <div class="measure-grid">
+            {{range .Fields}}
+            <div class="field measure-field">
+              <label for="m-{{$group.Category}}-{{.Key}}">
+                {{.Label}}
+                <button type="button" class="tip" aria-expanded="false" aria-label="How to measure {{.Label}}"></button>
+              </label>
+              <div class="measure-input">
+                <input id="m-{{$group.Category}}-{{.Key}}" type="number" inputmode="decimal" step="0.1" min="0"
+                  name="measure_{{.Key}}"
+                  value="{{get $.Data.Values (printf "measure_%s" .Key)}}"
+                  data-min="{{.Min}}" data-max="{{.Max}}" {{if .Age}}data-age="1"{{end}}
+                  placeholder="{{if .Age}}years{{else}}0{{end}}">
+                <span class="measure-unit" data-unit-label>{{if .Age}}yrs{{else}}cm{{end}}</span>
+              </div>
+              <p class="tip-text" hidden>{{.Tip}}</p>
+              <p class="field-error" data-error-for="measure_{{.Key}}"></p>
+            </div>
+            {{end}}
+          </div>
+        </div>
+        {{end}}
+
+        <div class="field field-notes">
+          <label for="notes">Notes for the tailor <span class="hint-inline">optional</span></label>
+          <textarea id="notes" name="notes" rows="3" maxlength="2000"
+            placeholder="Special requests: sleeve style, lining, a matching headwrap, a deadline we should know about.">{{get .Data.Values "notes"}}</textarea>
+        </div>
+
+        <label class="checkbox checkbox-remember">
+          <input type="checkbox" id="remember-measurements" name="remember" value="1">
+          <span>Remember these measurements on this device for next time</span>
+        </label>
+      </fieldset>
+
+      <!-- Step 4: details -->
+      <fieldset class="wizard-step" data-step="4" hidden>
+        <legend>Step 4 of 5 — Your details</legend>
+        <p class="step-hint">We use your phone or WhatsApp for fitting updates. No account needed.</p>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="customer-name">Full name</label>
+            <input id="customer-name" type="text" name="name" maxlength="80" autocomplete="name"
+              value="{{get .Data.Values "name"}}" required>
+            <p class="field-error">{{index .Data.Errors "name"}}</p>
+          </div>
+          <div class="field">
+            <label for="customer-phone">Phone / WhatsApp</label>
+            <input id="customer-phone" type="tel" name="phone" maxlength="30" autocomplete="tel"
+              value="{{get .Data.Values "phone"}}" placeholder="0712 345 678" required>
+            <p class="field-error">{{index .Data.Errors "phone"}}</p>
+          </div>
+          <div class="field">
+            <label for="customer-email">Email <span class="hint-inline">optional</span></label>
+            <input id="customer-email" type="email" name="email" maxlength="120" autocomplete="email"
+              value="{{get .Data.Values "email"}}">
+            <p class="field-error">{{index .Data.Errors "email"}}</p>
+          </div>
+          <div class="field">
+            <label for="customer-date">Preferred completion date</label>
+            <input id="customer-date" type="date" name="preferred_date" min="{{.Data.MinDate}}"
+              value="{{get .Data.Values "preferred_date"}}" required>
+            <p class="field-error">{{index .Data.Errors "preferred_date"}}</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field-label">How would you like it?</span>
+          <div class="delivery-options">
+            <label class="radio-line">
+              <input type="radio" name="delivery" value="pickup"
+                {{if ne (get .Data.Values "delivery") "delivery"}}checked{{end}}>
+              <span>Pick up from the Kisumu workshop</span>
+            </label>
+            <label class="radio-line">
+              <input type="radio" name="delivery" value="delivery"
+                {{if eq (get .Data.Values "delivery") "delivery"}}checked{{end}}>
+              <span>Deliver to me (courier quoted separately)</span>
+            </label>
+          </div>
+          <p class="field-error">{{index .Data.Errors "delivery"}}</p>
+        </div>
+
+        <div class="field" id="address-field">
+          <label for="customer-address">Delivery address</label>
+          <textarea id="customer-address" name="address" rows="2" maxlength="300"
+            placeholder="Estate or building, street, town">{{get .Data.Values "address"}}</textarea>
+          <p class="field-error">{{index .Data.Errors "address"}}</p>
+        </div>
+      </fieldset>
+
+      <!-- Step 5: review -->
+      <fieldset class="wizard-step" data-step="5" hidden>
+        <legend>Step 5 of 5 — Review and submit</legend>
+        <p class="step-hint">Check the summary. You can still edit any step before sending.</p>
+
+        <div class="review-card">
+          <h2 class="review-title">Your order</h2>
+          <dl class="review-list" id="review-summary">
+            <div><dt>Design</dt><dd data-review="design">—</dd></div>
+            <div><dt>Fabric</dt><dd data-review="fabric">—</dd></div>
+            <div><dt>Quantity</dt><dd data-review="quantity">—</dd></div>
+            <div><dt>Measurements</dt><dd data-review="measurements">—</dd></div>
+            <div><dt>Ready by</dt><dd data-review="date">—</dd></div>
+            <div><dt>Collection</dt><dd data-review="delivery">—</dd></div>
+            <div class="review-total"><dt>Estimated price</dt><dd data-review="price">—</dd></div>
+            <div><dt>Production time</dt><dd data-review="days">—</dd></div>
+          </dl>
+          <p class="review-note">This is an estimate. We confirm the final quote on WhatsApp before any cloth is cut.</p>
+          <p class="review-edit"><button type="button" class="link-arrow js-edit-step" data-goto="1">Edit design</button></p>
+        </div>
+
+        <label class="checkbox checkbox-terms">
+          <input type="checkbox" name="terms" value="1">
+          <span>I accept that this is an estimate, that measurements are taken by me, and that the shop confirms the final price before cutting. Deposits are non-refundable once fabric is cut.</span>
+        </label>
+        <p class="field-error">{{index .Data.Errors "terms"}}</p>
+      </fieldset>
+
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-quiet" id="wizard-back" hidden>Back</button>
+        <button type="button" class="btn btn-primary" id="wizard-next">Continue</button>
+        <button type="submit" class="btn btn-gold" id="wizard-submit" hidden>Submit order</button>
+      </div>
+      <p class="wizard-footnote">Prefer to talk first? <a href="{{wa "Hello Gojias Collections, I have a question before ordering."}}" target="_blank" rel="noopener">Message us on WhatsApp</a>.</p>
+    </form>
+
+    <script id="order-catalog" type="application/json">{{.Data.Catalog}}</script>
+  </div>
+</section>
+{{end}}
