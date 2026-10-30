@@ -28,6 +28,14 @@ go.work.sum
 # env file
 .env
 
+# Local SQLite database and its WAL/SHM siblings
+gojias.db
+gojias.db-*
+
+# Customer uploads stay out of git, but keep the folder
+/uploads/*
+!/uploads/.gitkeep
+
 # Editor/IDE
 # .idea/
 # .vscode/
