@@ -1,0 +1,54 @@
+{{define "content"}}
+<form class="admin-filters" method="get" action="/admin/orders">
+  <div class="field">
+    <label for="oq">Search</label>
+    <input id="oq" type="search" name="q" value="{{.Data.Filter.Query}}" placeholder="reference, name or phone">
+  </div>
+  <div class="field">
+    <label for="os">Status</label>
+    <select id="os" name="status">
+      <option value="">All statuses</option>
+      {{range .Data.Statuses}}
+        <option value="{{.Key}}"{{if eq .Key $.Data.Filter.Status}} selected{{end}}>{{.Label}}</option>
+      {{end}}
+    </select>
+  </div>
+  <div class="field">
+    <label for="of">From</label>
+    <input id="of" type="date" name="from" value="{{.Data.Filter.From}}">
+  </div>
+  <div class="field">
+    <label for="ot">To</label>
+    <input id="ot" type="date" name="to" value="{{.Data.Filter.To}}">
+  </div>
+  <button class="btn btn-primary btn-sm" type="submit">Filter</button>
+  <a class="btn btn-quiet btn-sm" href="/admin/orders">Clear</a>
+</form>
+
+<p class="help-text">{{.Data.Total}} order{{if ne .Data.Total 1}}s{{end}} shown (newest first, up to 200).</p>
+
+{{if .Data.Orders}}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr><th>Reference</th><th>Customer</th><th>Design</th><th>Placed</th><th>Status</th><th>Estimate</th><th></th></tr>
+    </thead>
+    <tbody>
+      {{range .Data.Orders}}
+      <tr>
+        <td><a href="/admin/orders/{{.Ref}}">{{.Ref}}</a></td>
+        <td>{{.CustomerName}}<br><span class="help-text">{{.Phone}}</span></td>
+        <td>{{.DesignName}}</td>
+        <td>{{date .CreatedAt}}</td>
+        <td><span class="pill pill-{{.Status}}">{{.Status}}</span></td>
+        <td>{{money .PriceEstimate}}</td>
+        <td><a class="btn btn-outline btn-xs" href="/admin/orders/{{.Ref}}">Open</a></td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{else}}
+<div class="panel"><p class="help-text">No orders match those filters.</p></div>
+{{end}}
+{{end}}
