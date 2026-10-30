@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 750" width="600" height="750" role="img" aria-label="Amani Wrap Dress placeholder">
+  <defs>
+    <pattern id="p" width="80" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="80" height="80" fill="#22355B"/>
+      <path d="M0 40 L40 0 L80 40 L40 80 Z" fill="#C1512B" opacity="0.55"/>
+      <circle cx="40" cy="40" r="8" fill="#C8973B"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="750" fill="url(#p)"/>
+  <rect x="18" y="18" width="564" height="714" fill="none" stroke="#C8973B" stroke-width="3" opacity="0.8"/>
+  <text x="300" y="636" text-anchor="middle" font-family="Georgia,serif" font-size="26" fill="#FFF8EC">Amani Wrap Dress</text>
+  <text x="300" y="672" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#FFF8EC" opacity="0.75" letter-spacing="3">PLACEHOLDER IMAGE</text>
+</svg>
