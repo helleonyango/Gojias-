@@ -1,0 +1,85 @@
+{{define "content"}}
+{{with .Data.Fabric}}
+<section class="section detail-top">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <a href="/fabrics">Fabrics</a><span aria-hidden="true">/</span>
+      <span>{{.Name}}</span>
+    </nav>
+
+    <div class="detail-grid">
+      <div class="gallery">
+        <div class="gallery-main">
+          <img id="gallery-main" src="{{index .Images 0}}" alt="{{.Name}} — {{.TypeLabel}} fabric" width="600" height="750">
+          {{if not .InStock}}<span class="badge badge-out">Out of stock</span>{{end}}
+        </div>
+        {{if gt (len .Images) 1}}
+        <div class="gallery-thumbs" role="list">
+          {{range $i, $img := .Images}}
+          <button type="button" class="thumb{{if eq $i 0}} is-active{{end}}" data-src="{{$img}}" aria-label="View image {{$i}}">
+            <img src="{{$img}}" alt="{{$.Data.Fabric.Name}} view {{$i}}" loading="lazy" width="120" height="150">
+          </button>
+          {{end}}
+        </div>
+        {{end}}
+      </div>
+
+      <div class="detail-copy">
+        <p class="eyebrow">{{.TypeLabel}}</p>
+        <h1>{{.Name}}</h1>
+        <p class="detail-price">{{money .Price}} <span>per {{.Unit}}</span></p>
+        <p class="lede">{{.Description}}</p>
+
+        <dl class="spec-list">
+          <div><dt>Colours</dt><dd class="colour-inline">
+            {{range .ColourList}}<span class="dot" style="background:{{swatch .}}" title="{{.}}"></span><span>{{.}}</span>{{end}}
+          </dd></div>
+          <div><dt>Width</dt><dd>{{.Width}}</dd></div>
+          <div><dt>Availability</dt><dd>{{if .InStock}}In stock — ready to cut{{else}}Out of stock — ask us to reorder{{end}}</dd></div>
+          <div><dt>Sold by</dt><dd>Per {{.Unit}}</dd></div>
+        </dl>
+
+        <div class="detail-actions">
+          <a class="btn btn-primary" href="/order?fabric={{.Slug}}">Use this fabric for an order</a>
+          <a class="btn btn-outline" href="{{wa (printf "Hello Gojias Collections, I would like to ask about the %s fabric (%s)." .Name .Slug)}}" target="_blank" rel="noopener">Ask on WhatsApp</a>
+        </div>
+
+        <details class="care">
+          <summary>Care instructions</summary>
+          <p>{{.Care}}</p>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{if $.Data.Designs}}
+<section class="section section-tint">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Pairs well with</p>
+      <h2>Designs that suit this fabric</h2>
+    </header>
+    <div class="grid grid-3">
+      {{range $.Data.Designs}}{{template "design-card" .}}{{end}}
+    </div>
+  </div>
+</section>
+{{end}}
+
+{{if .Similar}}
+<section class="section">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Keep looking</p>
+      <h2>Similar fabrics</h2>
+    </header>
+    <div class="grid grid-4">
+      {{range .Similar}}{{template "fabric-card" .}}{{end}}
+    </div>
+  </div>
+</section>
+{{end}}
+{{end}}
+{{end}}

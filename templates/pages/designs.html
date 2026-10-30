@@ -1,0 +1,73 @@
+{{define "content"}}
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Designs</span></nav>
+    <h1>Ready-made designs</h1>
+    <p class="lede">Every piece here is cut to your measurements — the price shown is where we start, before fabric and finishing.</p>
+  </div>
+</section>
+
+<section class="section section-flush">
+  <div class="container">
+    <nav class="tabs" aria-label="Design categories">
+      {{range .Data.Categories}}
+        <a class="tab{{if eq .Slug $.Data.Filter.Category}} is-active{{end}}"
+           href="/designs{{if .Slug}}?category={{.Slug}}{{end}}"
+           {{if eq .Slug $.Data.Filter.Category}}aria-current="page"{{end}}>{{.Label}}</a>
+      {{end}}
+    </nav>
+
+    <form class="filters filters-compact" method="get" action="/designs" role="search">
+      {{if .Data.Filter.Category}}<input type="hidden" name="category" value="{{.Data.Filter.Category}}">{{end}}
+
+      <div class="filter-field filter-search">
+        <label for="d-q">Search</label>
+        <input id="d-q" type="search" name="q" value="{{.Data.Filter.Query}}" placeholder="e.g. wrap dress" autocomplete="off">
+      </div>
+
+      <div class="filter-field">
+        <label for="d-style">Style</label>
+        <select id="d-style" name="style">
+          <option value="">Any style</option>
+          {{range .Data.Styles}}
+            <option value="{{.}}"{{if eq . $.Data.Filter.Style}} selected{{end}}>{{.}}</option>
+          {{end}}
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="d-max">Max price (KES)</label>
+        <input id="d-max" type="number" name="max" min="0" step="500" value="{{if .Data.Filter.MaxPrice}}{{printf "%.0f" .Data.Filter.MaxPrice}}{{end}}" placeholder="any">
+      </div>
+
+      <div class="filter-field">
+        <label for="d-sort">Sort</label>
+        <select id="d-sort" name="sort">
+          <option value="newest"{{if or (eq .Data.Filter.Sort "") (eq .Data.Filter.Sort "newest")}} selected{{end}}>Newest first</option>
+          <option value="price-asc"{{if eq .Data.Filter.Sort "price-asc"}} selected{{end}}>Price: low to high</option>
+          <option value="price-desc"{{if eq .Data.Filter.Sort "price-desc"}} selected{{end}}>Price: high to low</option>
+          <option value="name"{{if eq .Data.Filter.Sort "name"}} selected{{end}}>Name A–Z</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-primary btn-sm" type="submit">Apply</button>
+        {{if .Data.QuerySome}}<a class="btn btn-quiet btn-sm" href="/designs">Clear</a>{{end}}
+      </div>
+    </form>
+
+    <p class="result-count">
+      {{if .Data.Total}}{{.Data.Pager.From}}–{{.Data.Pager.To}} of {{.Data.Total}} design{{if ne .Data.Total 1}}s{{end}}{{else}}No designs found{{end}}
+    </p>
+
+    {{if .Data.Designs}}
+      <div class="grid grid-3">
+        {{range .Data.Designs}}{{template "design-card" .}}{{end}}
+      </div>
+      {{template "pager" .Data.Pager}}
+    {{else}}
+      {{template "empty-state" "/designs"}}
+    {{end}}
+  </div>
+</section>
+{{end}}

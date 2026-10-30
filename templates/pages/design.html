@@ -1,0 +1,71 @@
+{{define "content"}}
+{{with .Data.Design}}
+<section class="section detail-top">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span>
+      <a href="/designs">Designs</a><span aria-hidden="true">/</span>
+      <span>{{.Name}}</span>
+    </nav>
+
+    <div class="detail-grid">
+      <div class="gallery">
+        <div class="gallery-main">
+          <img id="gallery-main" src="{{index .Images 0}}" alt="{{.Name}} — {{.CategoryLabel}} design" width="600" height="750">
+          <span class="badge badge-soft">{{.CategoryLabel}}</span>
+        </div>
+        {{if gt (len .Images) 1}}
+        <div class="gallery-thumbs" role="list">
+          {{range $i, $img := .Images}}
+          <button type="button" class="thumb{{if eq $i 0}} is-active{{end}}" data-src="{{$img}}" aria-label="View image {{$i}}">
+            <img src="{{$img}}" alt="{{$.Data.Design.Name}} view {{$i}}" loading="lazy" width="120" height="150">
+          </button>
+          {{end}}
+        </div>
+        {{end}}
+      </div>
+
+      <div class="detail-copy">
+        <p class="eyebrow">{{.CategoryLabel}} · {{label .Style}}</p>
+        <h1>{{.Name}}</h1>
+        <p class="detail-price">from {{money .PriceFrom}}</p>
+        <p class="lede">{{.Description}}</p>
+
+        <dl class="spec-list">
+          <div><dt>Production time</dt><dd>{{.ProductionDays}} days from confirmed measurements</dd></div>
+          <div><dt>Occasion</dt><dd>{{label .Occasion}}</dd></div>
+          <div><dt>Made to measure</dt><dd>Yes — cut to your measurements, not a standard size</dd></div>
+        </dl>
+
+        <div class="measure-chips">
+          <h2 class="chips-title">What we need to measure</h2>
+          <ul>
+            {{range .RequiredMeasurements}}<li>{{label .}}</li>{{end}}
+          </ul>
+          <p class="chips-note">Not sure how? Our <a href="/how-to-measure">measuring guide</a> walks through each one with a tip.</p>
+        </div>
+
+        <div class="detail-actions">
+          <a class="btn btn-primary" href="/order?design={{.Slug}}">Choose this design</a>
+          <a class="btn btn-outline" href="{{wa (printf "Hello Gojias Collections, I am interested in the %s design (%s)." .Name .Slug)}}" target="_blank" rel="noopener">Ask on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{if .Fabrics}}
+<section class="section section-tint">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Fabric pairing</p>
+      <h2>Fabrics we recommend for this design</h2>
+    </header>
+    <div class="grid grid-3">
+      {{range .Fabrics}}{{template "fabric-card" .}}{{end}}
+    </div>
+  </div>
+</section>
+{{end}}
+{{end}}
+{{end}}
