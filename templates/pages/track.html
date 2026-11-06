@@ -1,0 +1,56 @@
+{{define "content"}}
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Track order</span></nav>
+    <h1>Track your order</h1>
+    <p class="lede">Enter the reference from your confirmation and the phone number you ordered with.</p>
+  </div>
+</section>
+
+<section class="section section-flush">
+  <div class="container order-shell-narrow">
+    {{if .Data.Error}}
+      <div class="alert alert-error" role="alert">{{.Data.Error}}</div>
+    {{end}}
+
+    <form class="track-form" method="post" action="/track">
+      <div class="field">
+        <label for="track-ref">Order reference</label>
+        <input id="track-ref" type="text" name="ref" value="{{.Data.Ref}}" placeholder="GC-2026-0001" autocomplete="off" required>
+      </div>
+      <div class="field">
+        <label for="track-phone">Phone number</label>
+        <input id="track-phone" type="tel" name="phone" placeholder="0712 345 678" autocomplete="tel" required>
+      </div>
+      <button class="btn btn-primary" type="submit">Find my order</button>
+    </form>
+
+    {{with .Data.Order}}
+    <div class="track-result">
+      <header class="track-head">
+        <div>
+          <p class="eyebrow">Order {{.Ref}}</p>
+          <h2>{{.DesignName}}</h2>
+          <p class="muted">Placed {{date .CreatedAt}} · {{fabricText .}} · estimated {{money .PriceEstimate}}</p>
+        </div>
+        <span class="status-pill status-pill-lg">{{$.Data.StatusText}}</span>
+      </header>
+
+      <ol class="timeline">
+        {{range $.Data.Timeline}}
+        <li class="timeline-step{{if .Done}} is-done{{end}}{{if .Current}} is-current{{end}}">
+          <span class="timeline-dot" aria-hidden="true"></span>
+          <div class="timeline-body">
+            <strong>{{.Label}}</strong>
+            <span class="timeline-date">{{if .Date}}{{.Date}}{{else}}Pending{{end}}</span>
+          </div>
+        </li>
+        {{end}}
+      </ol>
+
+      <p class="review-note">Questions about this order? <a href="{{wa (printf "Hello Gojias Collections, I am asking about order %s." .Ref)}}" target="_blank" rel="noopener">Message us on WhatsApp</a> and quote the reference.</p>
+    </div>
+    {{end}}
+  </div>
+</section>
+{{end}}

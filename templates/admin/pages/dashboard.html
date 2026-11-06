@@ -1,0 +1,72 @@
+{{define "content"}}
+<div class="stat-grid">
+  <div class="stat-card is-accent">
+    <span>New orders</span>
+    <strong>{{.Data.New}}</strong>
+    <a href="/admin/orders?status=new">Review them &rarr;</a>
+  </div>
+  <div class="stat-card">
+    <span>In progress</span>
+    <strong>{{.Data.InProgress}}</strong>
+    <a href="/admin/orders?status=cutting">Cutting, sewing &amp; confirmed</a>
+  </div>
+  <div class="stat-card">
+    <span>Ready for pickup</span>
+    <strong>{{.Data.Ready}}</strong>
+    <a href="/admin/orders?status=ready">See orders</a>
+  </div>
+  <div class="stat-card">
+    <span>Delivered this month</span>
+    <strong>{{.Data.Delivered}}</strong>
+    <a href="/admin/orders?status=delivered">History</a>
+  </div>
+</div>
+
+<section class="admin-section">
+  <h2>Recent orders <a class="btn btn-outline btn-xs" href="/admin/orders">All orders</a></h2>
+  {{if .Data.Recent}}
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead><tr><th>Reference</th><th>Customer</th><th>Design</th><th>Placed</th><th>Status</th><th>Estimate</th></tr></thead>
+      <tbody>
+        {{range .Data.Recent}}
+        <tr>
+          <td><a href="/admin/orders/{{.Ref}}">{{.Ref}}</a></td>
+          <td>{{.CustomerName}}<br><span class="help-text">{{.Phone}}</span></td>
+          <td>{{.DesignName}}</td>
+          <td>{{date .CreatedAt}}</td>
+          <td><span class="pill pill-{{.Status}}">{{.Status}}</span></td>
+          <td>{{money .PriceEstimate}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+    <p class="help-text">No orders yet. Orders placed through the site appear here immediately.</p>
+  {{end}}
+</section>
+
+<section class="admin-section">
+  <h2>Low stock <a class="btn btn-outline btn-xs" href="/admin/fabrics">Manage fabrics</a></h2>
+  {{if .Data.LowStock}}
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead><tr><th>Fabric</th><th>Type</th><th>Price</th><th></th></tr></thead>
+      <tbody>
+        {{range .Data.LowStock}}
+        <tr>
+          <td>{{.Name}}</td>
+          <td>{{.TypeLabel}}</td>
+          <td>{{money .Price}} / {{.Unit}}</td>
+          <td><a class="btn btn-outline btn-xs" href="/admin/fabrics/{{.ID}}/edit">Restock / edit</a></td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+    <p class="help-text">Every fabric is in stock.</p>
+  {{end}}
+</section>
+{{end}}

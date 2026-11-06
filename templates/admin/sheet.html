@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Measurement sheet {{with .Data.Order}}{{.Ref}}{{end}}</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body class="admin-body">
+  {{with .Data.Order}}
+  <div class="sheet-actions">
+    <a class="btn btn-quiet btn-sm" href="/admin/orders/{{.Ref}}">&larr; Back to order</a>
+    <button class="btn btn-primary btn-sm" type="button" onclick="window.print()">Print this sheet</button>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-head">
+      <div>
+        <h1>Gojias Collections</h1>
+        <p>Tailor's measurement sheet</p>
+      </div>
+      <div style="text-align:right">
+        <div class="sheet-ref">{{.Ref}}</div>
+        <p>{{date .CreatedAt}} · {{.Status}}</p>
+      </div>
+    </div>
+
+    <div class="sheet-cols">
+      <div>
+        <h2>Client</h2>
+        <table>
+          <tr><th>Name</th><td>{{.CustomerName}}</td></tr>
+          <tr><th>Phone</th><td>{{.Phone}}</td></tr>
+          {{if .Email}}<tr><th>Email</th><td>{{.Email}}</td></tr>{{end}}
+          <tr><th>Collection</th><td>{{label .Delivery}}{{if .Address}} — {{.Address}}{{end}}</td></tr>
+          <tr><th>Ready by</th><td>{{.PreferredDate}}</td></tr>
+        </table>
+      </div>
+      <div>
+        <h2>Garment</h2>
+        <table>
+          <tr><th>Design</th><td>{{.DesignName}}{{if .CustomDesign}} (custom){{end}}</td></tr>
+          <tr><th>Fabric</th><td>{{$.Data.FabricText}}</td></tr>
+          <tr><th>Quantity</th><td>{{num .Yardage}}</td></tr>
+          <tr><th>Estimate</th><td>{{money .PriceEstimate}}</td></tr>
+          <tr><th>Production</th><td>{{.ProductionDays}} days</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2>Measurements ({{.Unit}} as entered)</h2>
+    <table>
+      <thead><tr><th>Measurement</th><th>Value</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{range $.Data.Rows}}
+        <tr><td>{{.Label}}</td><td><strong>{{.Value}}</strong></td><td></td></tr>
+        {{end}}
+      </tbody>
+    </table>
+
+    <h2>Client notes</h2>
+    <div class="sheet-note">{{if .Notes}}{{.Notes}}{{else}}—{{end}}</div>
+
+    <h2>Workshop notes</h2>
+    <div class="sheet-note">{{if .InternalNotes}}{{.InternalNotes}}{{else}}—{{end}}</div>
+
+    <div class="sheet-cols">
+      <div>
+        <h2>Deposit</h2>
+        <p>KES {{num .Deposit}}{{if .PaymentNote}} — {{.PaymentNote}}{{end}}</p>
+      </div>
+      <div>
+        <h2>Checked by</h2>
+        <p>__________________________</p>
+      </div>
+    </div>
+
+    <div class="sheet-foot">
+      <span>Gojias Collections · {{bizName}}</span>
+      <span>{{.Ref}}</span>
+    </div>
+  </div>
+  {{end}}
+</body>
+</html>

@@ -1,0 +1,22 @@
+{{define "content"}}
+<div class="admin-login-card">
+  <h1>Sign in</h1>
+  <p class="lede">Manage orders, fabrics and designs.</p>
+
+  {{if .Error}}<div class="admin-flash admin-flash-error" role="alert">{{.Error}}</div>{{end}}
+
+  <form method="post" action="/admin/login">
+    <input type="hidden" name="next" value="{{.Data.Next}}">
+    <div class="field">
+      <label for="login-email">Email</label>
+      <input id="login-email" type="email" name="email" autocomplete="username" value="{{.Data.Email}}" required autofocus>
+    </div>
+    <div class="field">
+      <label for="login-password">Password</label>
+      <input id="login-password" type="password" name="password" autocomplete="current-password" required>
+    </div>
+    <button class="btn btn-primary" type="submit" style="width:100%">Sign in</button>
+  </form>
+  <p class="help-text" style="margin-top:.9rem">Forgotten the password? Ask another member of staff, or reset it from the server with the <code>-db</code> tooling once an account exists.</p>
+</div>
+{{end}}

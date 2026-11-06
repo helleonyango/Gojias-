@@ -1,0 +1,46 @@
+{{define "footer"}}
+<div class="pattern-strip" aria-hidden="true"></div>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="brand brand-light" href="/">
+        <span class="brand-mark" aria-hidden="true">GC</span>
+        <span class="brand-text"><strong>Gojias</strong><em>Collections</em></span>
+      </a>
+      <p>Kitenge and Ankara attire designed, cut and sewn to your measurements in our Kisumu workshop.</p>
+      <div class="socials">
+        <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://facebook.com" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://tiktok.com" target="_blank" rel="noopener">TikTok</a>
+        <a href="{{wa "Hello Gojias Collections!"}}" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+
+    <nav class="footer-col" aria-label="Quick links">
+      <h2>Explore</h2>
+      <a href="/fabrics">Fabrics</a>
+      <a href="/designs">Ready-made designs</a>
+      <a href="/how-to-measure">How to measure</a>
+      <a href="/track">Track your order</a>
+    </nav>
+
+    <div class="footer-col">
+      <h2>Visit us</h2>
+      <p>{{contactAddress}}</p>
+      <p><a href="tel:{{contactPhone}}">{{contactPhone}}</a><br>
+         <a href="mailto:{{contactEmail}}">{{contactEmail}}</a></p>
+    </div>
+
+    <div class="footer-col">
+      <h2>Hours</h2>
+      <p>{{contactHours}}</p>
+      <p class="footer-note">Fittings by appointment.</p>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>© {{.Year}} {{bizName}}. All rights reserved. · <a href="/admin">Staff login</a></p>
+    <p>Prices in Kenyan shillings (KES).</p>
+  </div>
+</footer>
+{{end}}

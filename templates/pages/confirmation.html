@@ -1,0 +1,59 @@
+{{define "content"}}
+{{with .Data.Order}}
+<section class="section">
+  <div class="container order-shell">
+    <div class="confirmation-hero">
+      <span class="confirmation-tick" aria-hidden="true">&#10003;</span>
+      <p class="eyebrow">Order received</p>
+      <h1>Thank you, {{.CustomerName}}</h1>
+      <p class="lede">We have your order and someone will confirm it on WhatsApp within one working day.</p>
+      <p class="ref-badge">Order reference <strong>{{.Ref}}</strong></p>
+      <p class="ref-hint">Keep this reference. You can check progress any time on the <a href="/track?ref={{.Ref}}">track order</a> page using this reference and your phone number.</p>
+    </div>
+
+    <div class="confirmation-actions">
+      <a class="btn btn-primary" href="/orders/{{.Ref}}/summary.pdf?t={{$.Data.Token}}">Download summary (PDF)</a>
+      <a class="btn btn-outline" href="{{wa (printf "Hello Gojias Collections, I have just placed order %s." .Ref)}}" target="_blank" rel="noopener">Message us on WhatsApp</a>
+      <a class="btn btn-quiet" href="/track?ref={{.Ref}}">Track this order</a>
+    </div>
+
+    <div class="confirmation-grid">
+      <div class="review-card">
+        <h2 class="review-title">What you ordered</h2>
+        <dl class="review-list">
+          <div><dt>Design</dt><dd>{{.DesignName}}{{if .CustomDesign}} <span class="tag">custom</span>{{end}}</dd></div>
+          <div><dt>Fabric</dt><dd>{{fabricText .}}</dd></div>
+          <div><dt>Estimated quantity</dt><dd>{{num .Yardage}}</dd></div>
+          <div><dt>Estimated price</dt><dd>{{money .PriceEstimate}}</dd></div>
+          <div><dt>Production time</dt><dd>{{.ProductionDays}} days</dd></div>
+          <div><dt>Preferred date</dt><dd>{{.PreferredDate}}</dd></div>
+          <div><dt>Collection</dt><dd>{{label .Delivery}}{{if .Address}} — {{.Address}}{{end}}</dd></div>
+          <div><dt>Status</dt><dd><span class="status-pill">{{$.Data.StatusText}}</span></dd></div>
+        </dl>
+        {{if .Notes}}<p class="review-note"><strong>Your notes:</strong> {{.Notes}}</p>{{end}}
+      </div>
+
+      <div class="review-card">
+        <h2 class="review-title">Measurements we received</h2>
+        <dl class="measure-table">
+          {{range $.Data.Rows}}
+          <div><dt>{{.Label}}</dt><dd>{{.Value}}</dd></div>
+          {{end}}
+        </dl>
+        <p class="review-note">Measured in {{.Unit}}. If anything looks off, send us a WhatsApp message with the reference above and we will correct it before cutting.</p>
+      </div>
+    </div>
+
+    <div class="next-steps">
+      <h2>What happens next</h2>
+      <ol class="steps steps-compact">
+        <li><span class="step-num">01</span><h3>We confirm</h3><p>We check your measurements and fabric, then message you with the final quote.</p></li>
+        <li><span class="step-num">02</span><h3>Deposit</h3><p>A deposit secures your place in the workshop schedule.</p></li>
+        <li><span class="step-num">03</span><h3>Cutting &amp; sewing</h3><p>Your order moves through cutting, sewing and finishing — visible on the tracking page.</p></li>
+        <li><span class="step-num">04</span><h3>Ready</h3><p>Collect in Kisumu or we arrange the courier.</p></li>
+      </ol>
+    </div>
+  </div>
+</section>
+{{end}}
+{{end}}

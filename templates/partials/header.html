@@ -1,0 +1,24 @@
+{{define "header"}}
+<header class="site-header" id="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="Gojias Collections home">
+      <span class="brand-mark" aria-hidden="true">GC</span>
+      <span class="brand-text"><strong>Gojias</strong><em>Collections</em></span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <a href="/"{{if eq .Active "home"}} class="active" aria-current="page"{{end}}>Home</a>
+      <a href="/fabrics"{{if eq .Active "fabrics"}} class="active" aria-current="page"{{end}}>Fabrics</a>
+      <a href="/designs"{{if eq .Active "designs"}} class="active" aria-current="page"{{end}}>Designs</a>
+      <a href="/how-to-measure">How to Measure</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+      <a class="btn btn-gold btn-sm nav-cta" href="/order">Order Now</a>
+    </nav>
+  </div>
+</header>
+{{end}}

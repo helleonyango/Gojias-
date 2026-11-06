@@ -1,0 +1,107 @@
+{{define "content"}}
+<form class="admin-form" method="post" enctype="multipart/form-data"
+      action="{{if .Data.ID}}/admin/designs/{{.Data.ID}}{{else}}/admin/designs{{end}}">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+
+  <div class="form-grid">
+    <div class="field">
+      <label for="dname">Name</label>
+      <input id="dname" type="text" name="name" maxlength="80" value="{{get .Data.Values "name"}}" required>
+      {{with index .Data.Errors "name"}}<p class="field-error">{{.}}</p>{{end}}
+    </div>
+    <div class="field">
+      <label for="dslug">URL slug <span class="hint-inline">leave blank to generate</span></label>
+      <input id="dslug" type="text" name="slug" maxlength="80" value="{{get .Data.Values "slug"}}">
+    </div>
+    <div class="field">
+      <label for="dcategory">Category</label>
+      <select id="dcategory" name="category">
+        {{$cat := get .Data.Values "category"}}
+        {{range .Data.Categories}}
+          <option value="{{.}}"{{if eq . $cat}} selected{{end}}>{{.}}</option>
+        {{end}}
+      </select>
+      {{with index .Data.Errors "category"}}<p class="field-error">{{.}}</p>{{end}}
+    </div>
+    <div class="field">
+      <label for="dstyle">Style</label>
+      <input id="dstyle" type="text" name="style" maxlength="60" value="{{get .Data.Values "style"}}" placeholder="gown, kaftan, shirt, set">
+    </div>
+    <div class="field">
+      <label for="doccasion">Occasion</label>
+      <input id="doccasion" type="text" name="occasion" maxlength="60" value="{{get .Data.Values "occasion"}}" placeholder="wedding, everyday, casual">
+    </div>
+    <div class="field">
+      <label for="dprice">Starting price (KES)</label>
+      <input id="dprice" type="number" name="price" min="0" step="100" value="{{get .Data.Values "price"}}" required>
+      {{with index .Data.Errors "price"}}<p class="field-error">{{.}}</p>{{end}}
+    </div>
+    <div class="field">
+      <label for="ddays">Production time (days)</label>
+      <input id="ddays" type="number" name="days" min="0" max="120" value="{{get .Data.Values "days"}}">
+      {{with index .Data.Errors "days"}}<p class="field-error">{{.}}</p>{{end}}
+    </div>
+    <div class="field">
+      <label>Visibility</label>
+      <label class="checkbox"><input type="checkbox" name="featured" value="1"{{if .Data.Featured}} checked{{end}}> Featured on the home page</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="ddescription">Description</label>
+    <textarea id="ddescription" name="description" rows="4" maxlength="2000">{{get .Data.Values "description"}}</textarea>
+  </div>
+
+  <div class="field">
+    <label>Required measurements</label>
+    {{with index .Data.Errors "measurements"}}<p class="field-error">{{.}}</p>{{end}}
+    <div class="checkbox-grid">
+      {{$selected := .Data.Measurements}}
+      {{range .Data.MeasureOptions}}
+        {{$opt := .}}
+        <label>
+          <input type="checkbox" name="measurements" value="{{.Key}}"
+            {{range $selected}}{{if eq . $opt.Key}}checked{{end}}{{end}}> {{.Label}}
+        </label>
+      {{end}}
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="dfabrics">Recommended fabrics <span class="hint-inline">ctrl/cmd-click to pick several</span></label>
+    <select id="dfabrics" name="fabrics" multiple size="8">
+      {{$picked := .Data.FabricIDs}}
+      {{range .Data.Fabrics}}
+        {{$fab := .}}
+        <option value="{{.ID}}"
+          {{range $picked}}{{if eq . $fab.ID}}selected{{end}}{{end}}>{{.Name}} — {{.TypeLabel}} ({{money .Price}}/{{.Unit}})</option>
+      {{end}}
+    </select>
+  </div>
+
+  {{if .Data.Images}}
+  <div class="field">
+    <label>Current photos <span class="hint-inline">tick to remove</span></label>
+    <div class="image-grid">
+      {{range .Data.Images}}
+      <div class="image-item">
+        <img src="{{.URL}}" alt="">
+        <label><input type="checkbox" name="remove_image" value="{{.ID}}"> Remove</label>
+      </div>
+      {{end}}
+    </div>
+  </div>
+  {{end}}
+
+  <div class="field">
+    <label for="dimages">Add photos <span class="hint-inline">JPG/PNG/WebP, up to 6 files, 5 MB each</span></label>
+    <input id="dimages" type="file" name="images" accept="image/jpeg,image/png,image/webp" multiple>
+    {{with index .Data.Errors "images"}}<p class="field-error">{{.}}</p>{{end}}
+  </div>
+
+  <div class="admin-form-actions">
+    <button class="btn btn-primary" type="submit">Save design</button>
+    <a class="btn btn-quiet" href="/admin/designs">Cancel</a>
+  </div>
+</form>
+{{end}}

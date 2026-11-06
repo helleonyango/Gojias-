@@ -1,0 +1,82 @@
+{{define "content"}}
+<form class="admin-form" method="post" enctype="multipart/form-data"
+      action="{{if .Data.ID}}/admin/fabrics/{{.Data.ID}}{{else}}/admin/fabrics{{end}}">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+
+  <div class="form-grid">
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" type="text" name="name" maxlength="80" value="{{get .Data.Values "name"}}" required>
+      {{with index .Data.Errors "name"}}<p class="field-error">{{.}}</p>{{end}}
+    </div>
+    <div class="field">
+      <label for="slug">URL slug <span class="hint-inline">leave blank to generate</span></label>
+      <input id="slug" type="text" name="slug" maxlength="80" value="{{get .Data.Values "slug"}}" placeholder="kitenge-royal-bloom">
+    </div>
+    <div class="field">
+      <label for="type">Fabric family</label>
+      <input id="type" type="text" name="type" maxlength="40" value="{{get .Data.Values "type"}}" placeholder="kitenge, ankara, lace, plain-cotton" required>
+      {{with index .Data.Errors "type"}}<p class="field-error">{{.}}</p>{{end}}
+    </div>
+    <div class="field">
+      <label for="colours">Colours <span class="hint-inline">comma separated</span></label>
+      <input id="colours" type="text" name="colours" maxlength="200" value="{{get .Data.Values "colours"}}" placeholder="Orange, Gold, Indigo">
+    </div>
+    <div class="field">
+      <label for="price">Price (KES)</label>
+      <input id="price" type="number" name="price" min="0" step="1" value="{{get .Data.Values "price"}}" required>
+      {{with index .Data.Errors "price"}}<p class="field-error">{{.}}</p>{{end}}
+    </div>
+    <div class="field">
+      <label for="unit">Sold by</label>
+      <select id="unit" name="unit">
+        <option value="yard"{{if eq (get .Data.Values "unit") "yard"}} selected{{end}}>per yard</option>
+        <option value="metre"{{if eq (get .Data.Values "unit") "metre"}} selected{{end}}>per metre</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="width">Width</label>
+      <input id="width" type="text" name="width" maxlength="40" value="{{get .Data.Values "width"}}" placeholder="115 cm">
+    </div>
+    <div class="field">
+      <label>Visibility</label>
+      <label class="checkbox"><input type="checkbox" name="in_stock" value="1"{{if .Data.InStock}} checked{{end}}> In stock</label>
+      <label class="checkbox"><input type="checkbox" name="featured" value="1"{{if .Data.Featured}} checked{{end}}> Featured on the home page</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="description">Description</label>
+    <textarea id="description" name="description" rows="4" maxlength="2000">{{get .Data.Values "description"}}</textarea>
+  </div>
+  <div class="field">
+    <label for="care">Care instructions</label>
+    <textarea id="care" name="care" rows="3" maxlength="600">{{get .Data.Values "care"}}</textarea>
+  </div>
+
+  {{if .Data.Images}}
+  <div class="field">
+    <label>Current photos <span class="hint-inline">tick to remove</span></label>
+    <div class="image-grid">
+      {{range .Data.Images}}
+      <div class="image-item">
+        <img src="{{.URL}}" alt="">
+        <label><input type="checkbox" name="remove_image" value="{{.ID}}"> Remove</label>
+      </div>
+      {{end}}
+    </div>
+  </div>
+  {{end}}
+
+  <div class="field">
+    <label for="images">Add photos <span class="hint-inline">JPG/PNG/WebP, up to 6 files, 5 MB each</span></label>
+    <input id="images" type="file" name="images" accept="image/jpeg,image/png,image/webp" multiple>
+    {{with index .Data.Errors "images"}}<p class="field-error">{{.}}</p>{{end}}
+  </div>
+
+  <div class="admin-form-actions">
+    <button class="btn btn-primary" type="submit">Save fabric</button>
+    <a class="btn btn-quiet" href="/admin/fabrics">Cancel</a>
+  </div>
+</form>
+{{end}}

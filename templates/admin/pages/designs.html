@@ -1,0 +1,50 @@
+{{define "content"}}
+<form class="admin-filters" method="get" action="/admin/designs">
+  <div class="field" style="min-width:260px">
+    <label for="dq">Search designs</label>
+    <input id="dq" type="search" name="q" value="{{.Data.Query}}" placeholder="name, style or occasion">
+  </div>
+  <button class="btn btn-primary btn-sm" type="submit">Search</button>
+  <a class="btn btn-quiet btn-sm" href="/admin/designs">Reset</a>
+  <a class="btn btn-gold btn-sm" href="/admin/designs/new" style="margin-left:auto">+ Add design</a>
+</form>
+
+<p class="help-text">{{.Data.Total}} design{{if ne .Data.Total 1}}s{{end}}.</p>
+
+{{if .Data.Designs}}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr><th></th><th>Name</th><th>Category</th><th>From</th><th>Production</th><th>Featured</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {{range .Data.Designs}}
+      <tr>
+        <td><img class="thumb-sm" src="{{.Image}}" alt=""></td>
+        <td><a href="/designs/{{.Slug}}" target="_blank" rel="noopener">{{.Name}}</a><br><span class="help-text">/{{.Slug}}</span></td>
+        <td>{{.CategoryLabel}}</td>
+        <td>{{money .PriceFrom}}</td>
+        <td>{{.ProductionDays}} days</td>
+        <td>{{if .Featured}}<span class="pill pill-featured">Featured</span>{{else}}<span class="help-text">—</span>{{end}}</td>
+        <td>
+          <div class="row-actions">
+            <a class="btn btn-outline btn-xs" href="/admin/designs/{{.ID}}/edit">Edit</a>
+            <form method="post" action="/admin/designs/{{.ID}}/toggle">
+              <input type="hidden" name="csrf" value="{{$.CSRF}}">
+              <button class="btn btn-quiet btn-xs" type="submit">{{if .Featured}}Unfeature{{else}}Feature{{end}}</button>
+            </form>
+            <form method="post" action="/admin/designs/{{.ID}}/delete" onsubmit="return confirm('Delete {{.Name}}? This cannot be undone.');">
+              <input type="hidden" name="csrf" value="{{$.CSRF}}">
+              <button class="btn btn-danger btn-xs" type="submit">Delete</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{else}}
+<div class="panel"><p class="help-text">No designs match that search.</p></div>
+{{end}}
+{{end}}

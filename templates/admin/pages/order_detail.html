@@ -1,0 +1,100 @@
+{{define "content"}}
+{{with .Data.Order}}
+<div class="detail-columns">
+  <div>
+    <div class="panel">
+      <h2>{{.CustomerName}} <span class="pill pill-{{.Status}}">{{statusLabel .Status}}</span></h2>
+      <dl>
+        <div><dt>Phone</dt><dd><a href="tel:{{.Phone}}">{{.Phone}}</a> · <a href="{{wa (printf "Hello %s, about your order %s." .CustomerName .Ref)}}" target="_blank" rel="noopener">WhatsApp</a></dd></div>
+        <div><dt>Email</dt><dd>{{if .Email}}<a href="mailto:{{.Email}}">{{.Email}}</a>{{else}}<span class="help-text">none</span>{{end}}</dd></div>
+        <div><dt>Collection</dt><dd>{{label .Delivery}}{{if .Address}} — {{.Address}}{{end}}</dd></div>
+        <div><dt>Ready by</dt><dd>{{.PreferredDate}}</dd></div>
+        <div><dt>Placed</dt><dd>{{date .CreatedAt}}</dd></div>
+        <div><dt>Notes</dt><dd>{{if .Notes}}{{.Notes}}{{else}}<span class="help-text">none</span>{{end}}</dd></div>
+        {{if .InspirationImg}}<div><dt>Inspiration</dt><dd><a href="{{.InspirationImg}}" target="_blank" rel="noopener">open photo</a></dd></div>{{end}}
+      </dl>
+    </div>
+
+    <div class="panel">
+      <h2>Order</h2>
+      <dl>
+        <div><dt>Design</dt><dd>{{.DesignName}}{{if .CustomDesign}} <span class="pill pill-featured">custom</span>{{end}}</dd></div>
+        {{if .InspirationTxt}}<div><dt>Idea</dt><dd>{{.InspirationTxt}}</dd></div>{{end}}
+        <div><dt>Fabric</dt><dd>{{$.Data.FabricText}}</dd></div>
+        <div><dt>Quantity</dt><dd>{{num .Yardage}}</dd></div>
+        <div><dt>Estimate</dt><dd>{{money .PriceEstimate}}</dd></div>
+        <div><dt>Production</dt><dd>{{.ProductionDays}} days</dd></div>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <h2>Measurements <span class="help-text">({{.Unit}} as entered)</span>
+        <a class="btn btn-outline btn-xs" href="/admin/orders/{{.Ref}}/sheet" target="_blank" rel="noopener">Printable sheet</a>
+      </h2>
+      <dl class="measure-admin-grid">
+        {{range $.Data.Rows}}
+        <div><dt>{{.Label}}</dt><dd>{{.Value}}</dd></div>
+        {{end}}
+      </dl>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <h2>Update status</h2>
+      <form method="post" action="/admin/orders/{{.Ref}}/status">
+        <input type="hidden" name="csrf" value="{{$.CSRF}}">
+        <div class="field">
+          <label for="status">New status</label>
+          <select id="status" name="status">
+            {{$current := .Status}}
+            {{range $.Data.Statuses}}
+              <option value="{{.Key}}"{{if eq .Key $current}} selected{{end}}>{{.Label}}</option>
+            {{end}}
+          </select>
+        </div>
+        <div class="field">
+          <label for="status-note">Note (optional)</label>
+          <input id="status-note" type="text" name="note" maxlength="500" placeholder="e.g. collected by courier">
+        </div>
+        <label class="checkbox"><input type="checkbox" name="notify" value="1"{{if .Email}} checked{{end}}> Email the customer about this change</label>
+        <div class="admin-form-actions">
+          <button class="btn btn-primary btn-sm" type="submit">Save status</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Internal notes &amp; payment</h2>
+      <form method="post" action="/admin/orders/{{.Ref}}/notes">
+        <input type="hidden" name="csrf" value="{{$.CSRF}}">
+        <div class="field">
+          <label for="internal-notes">Notes (never shown to the customer)</label>
+          <textarea id="internal-notes" name="internal_notes" rows="4" maxlength="2000">{{.InternalNotes}}</textarea>
+        </div>
+        <div class="field">
+          <label for="deposit">Deposit received (KES)</label>
+          <input id="deposit" type="number" name="deposit" min="0" step="50" value="{{if .Deposit}}{{num .Deposit}}{{end}}">
+        </div>
+        <div class="field">
+          <label for="payment-note">Payment note</label>
+          <input id="payment-note" type="text" name="payment_note" maxlength="400" value="{{.PaymentNote}}" placeholder="e.g. M-Pesa 4RT9… on 12 Mar">
+        </div>
+        <div class="admin-form-actions">
+          <button class="btn btn-primary btn-sm" type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>History</h2>
+      <ul class="timeline-mini">
+        {{range .History}}
+        <li><strong>{{statusLabel .Status}}</strong><span>{{date .CreatedAt}} {{if .Note}}· {{.Note}}{{end}}</span></li>
+        {{end}}
+      </ul>
+    </div>
+  </div>
+</div>
+{{end}}
+{{end}}
