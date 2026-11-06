@@ -2,9 +2,9 @@
 // renders server-side templates over a SQLite catalogue of fabrics and designs.
 //
 // The public side covers Home, Fabrics, Designs, the five-step order wizard,
-// confirmation with a PDF summary, and order tracking. The staff dashboard at
-// /admin manages the catalogue, orders and business settings. The content pages
-// (How to Measure, About, Contact) still show a placeholder.
+// confirmation with a PDF summary, order tracking, and the How to Measure guide.
+// The staff dashboard at /admin manages the catalogue, orders and business settings.
+// About and Contact still show a placeholder.
 package main
 
 import (
@@ -24,6 +24,7 @@ import (
 	"sync"
 	"time"
 
+	"gojias/internal/measure"
 	"gojias/internal/notify"
 	"gojias/internal/store"
 )
@@ -179,11 +180,12 @@ func run(addr, dbPath string) error {
 	mux.HandleFunc("POST /admin/settings", app.admin(app.adminSaveSettings))
 	mux.HandleFunc("POST /admin/settings/password", app.admin(app.adminChangePassword))
 
+	mux.HandleFunc("GET /how-to-measure", app.howToMeasure)
+
 	// Content pages that are still to be written.
 	comingSoon := map[string]string{
-		"/how-to-measure": "How to Measure",
-		"/about":          "About Gojias Collections",
-		"/contact":        "Contact & Visit",
+		"/about":   "About Gojias Collections",
+		"/contact": "Contact & Visit",
 	}
 	for route, title := range comingSoon {
 		route, title := route, title
@@ -398,6 +400,22 @@ func (a *App) designDetail(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (a *App) howToMeasure(w http.ResponseWriter, r *http.Request) {
+	guides := measure.Guides()
+	selected := r.URL.Query().Get("garment")
+	current := measure.GuideBySlug(selected)
+	a.render(w, http.StatusOK, "how-to-measure", page{
+		Title:  "How to Measure",
+		Desc:   "Garment-specific measuring guide in inches for Gojias Collections — shoulder, bust, chest, waist, bodice, hips, full length, sleeve and more.",
+		Active: "how-to-measure",
+		Data: map[string]any{
+			"Guides":   guides,
+			"Current":  current,
+			"Selected": current.Slug,
+		},
+	})
+}
+
 func (a *App) notFound(w http.ResponseWriter, r *http.Request) {
 	a.render(w, http.StatusNotFound, "notfound", page{
 		Title: "Page not found",
@@ -412,7 +430,7 @@ func (a *App) notFound(w http.ResponseWriter, r *http.Request) {
 
 func loadTemplates() (map[string]*template.Template, error) {
 	names := []string{"home", "fabrics", "fabric", "designs", "design", "coming-soon", "notfound",
-		"order", "confirmation", "track"}
+		"order", "confirmation", "track", "how-to-measure"}
 	funcs := template.FuncMap{
 		"money":      money,
 		"date":       date,

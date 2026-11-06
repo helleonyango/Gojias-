@@ -1,0 +1,68 @@
+{{define "content"}}
+<section class="section page-hero page-hero-tight">
+  <div class="container narrow">
+    <p class="eyebrow">How to measure</p>
+    <h1>Measurements, in inches, for the garment you’re tailoring</h1>
+    <p class="lede">Pick what you’re having made and we’ll show only the measurements that garment needs — so you won’t see hips for a shirt, or dress-only measurements when you’re ordering a shirt or trousers. All ranges below are in <strong>inches</strong>.</p>
+  </div>
+</section>
+
+<section class="section section-flush">
+  <div class="container">
+    <div class="measure-guide-layout">
+      <aside class="measure-guide-aside">
+        <h2 class="aside-title">What are we tailoring?</h2>
+        <nav class="garment-picker" aria-label="Garment type">
+          {{range .Data.Guides}}
+          <a class="garment-chip{{if eq $.Data.Selected .Slug}} is-active{{end}}" href="/how-to-measure?garment={{.Slug}}"{{if eq $.Data.Selected .Slug}} aria-current="true"{{end}}>{{.Label}}</a>
+          {{end}}
+        </nav>
+
+        <div class="guide-tips-card">
+          <h3>Before you start</h3>
+          <ul>
+            <li>Use a soft tape measure and keep it <strong>level</strong> around the body.</li>
+            <li>Measure over light clothing — snug, not tight (you should fit a finger under the tape where noted).</li>
+            <li>Stand straight and relaxed; ask someone to help for shoulder, back and length.</li>
+            <li>For length, wear the shoes/heels you plan to use.</li>
+          </ul>
+          <p class="muted">Our <a href="/order">order form</a> accepts <strong>centimetres or inches</strong> (you can switch units there). This guide lists everything in inches.</p>
+        </div>
+      </aside>
+
+      <div class="measure-guide-main">
+        {{with .Data.Current}}
+        <header class="guide-head">
+          <p class="eyebrow">Selected garment</p>
+          <h2>{{.Label}}</h2>
+          <p class="lede">{{.Blurb}}</p>
+        </header>
+
+        <ol class="measure-steps">
+          {{range .Items}}
+          <li class="measure-step">
+            <div class="measure-step-body">
+              <div class="measure-step-top">
+                <h3>{{.Label}}</h3>
+                {{if .InchRange}}<span class="inch-badge" title="Typical range in inches">{{.InchRange}}</span>{{end}}
+              </div>
+              <p>{{.How}}</p>
+              {{if .Tip}}<p class="measure-tip"><strong>Tip:</strong> {{.Tip}}</p>{{end}}
+            </div>
+          </li>
+          {{end}}
+        </ol>
+
+        <div class="guide-cta">
+          <p>Ready with your measurements? Start your order and we’ll confirm the details before any cloth is cut.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="/order">Start an order</a>
+            <a class="btn btn-outline" href="{{wa `Hello Gojias Collections, I need help taking my measurements.`}}" target="_blank" rel="noopener">Ask for help on WhatsApp</a>
+          </div>
+        </div>
+        {{end}}
+      </div>
+    </div>
+  </div>
+</section>
+{{end}}
