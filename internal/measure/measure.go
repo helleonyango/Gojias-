@@ -175,3 +175,157 @@ func Validate(raw map[string]string, category, unit string) (map[string]float64,
 	}
 	return values, errs
 }
+
+// ---------------------------------------------------------------------------
+// How-to-measure garment guides (shown on /how-to-measure, in inches).
+// Each guide lists only the measurements relevant to that garment so customers
+// never see unrelated fields (e.g. no hips for a shirt, no chest for a dress).
+// ---------------------------------------------------------------------------
+
+// GuideItem is one measurement step in a garment guide.
+type GuideItem struct {
+	Key       string // matches a validation field key where applicable, else descriptive
+	Label     string
+	How       string // plain-language instruction
+	InchRange string // typical range shown in inches
+	Tip       string // extra tip, optional
+}
+
+// GarmentGuide describes which measurements to take for one type of garment.
+type GarmentGuide struct {
+	Slug  string
+	Label string
+	Blurb string
+	Items []GuideItem
+}
+
+func inchRange(cmMin, cmMax float64) string {
+	return fmt.Sprintf("%.0f–%.0f in", math.Round(cmMin/2.54), math.Round(cmMax/2.54))
+}
+
+// fieldTip returns the tip for a known measurement key, falling back to def.
+func fieldTip(category, key, def string) string {
+	if f, ok := FieldFor(category, key); ok && f.Tip != "" {
+		return f.Tip
+	}
+	return def
+}
+
+func itemFrom(category, key, label, how string) GuideItem {
+	f, _ := FieldFor(category, key)
+	r := ""
+	if f.Key != "" {
+		r = inchRange(f.Min, f.Max)
+	}
+	tip := ""
+	if f.Key != "" {
+		tip = f.Tip
+	}
+	return GuideItem{Key: key, Label: label, How: how, InchRange: r, Tip: tip}
+}
+
+// Guides returns garment-specific measuring guides in display order.
+func Guides() []GarmentGuide {
+	return []GarmentGuide{
+		{
+			Slug:  "dress-gown",
+			Label: "Dress / Gown",
+			Blurb: "For fitted and flared dresses, gowns and wrap styles. We take bust (not men's chest), waist, hips and the full length so the dress hangs right.",
+			Items: []GuideItem{
+				itemFrom("women", "shoulder", "Shoulder", "Measure across your back from the edge of one shoulder bone to the other, following the natural shoulder line."),
+				itemFrom("women", "bust", "Bust", "Wrap the tape around the fullest part of your bust, keep it level under the arms and relaxed across the back."),
+				itemFrom("women", "waist", "Waist", "Find the narrowest part of your torso (usually just above the navel) and measure around it, tape snug but not tight."),
+				{Key: "bodice", Label: "Bodice length", How: "From the top of your shoulder (near the base of the neck) down over the bust to your natural waistline. This controls where the waist seam sits.", InchRange: "13–20 in", Tip: "Stand straight and keep the tape following your front body curve."},
+				itemFrom("women", "hips", "Hips", "Measure around the fullest part of your hips and seat, about 8 in (20 cm) below the waist, keeping the tape level."),
+				itemFrom("women", "sleeve", "Sleeve length", "From the shoulder point down the arm to where you want the sleeve to end (cap, short, elbow or wrist), arm slightly bent."),
+				itemFrom("women", "armhole", "Armhole", "Wrap the tape around the arm at the shoulder joint, passing under the armpit — comfortably snug, not digging in."),
+				itemFrom("women", "length", "Full length", "From the top of the shoulder down the front to where you want the hem (knee, midi or floor). Wear the shoes/heels you plan to use if length matters."),
+			},
+		},
+		{
+			Slug:  "skirt",
+			Label: "Skirt",
+			Blurb: "For pencil, A-line, wrap and pleated skirts. Hips and waist set the fit; full length sets the hem.",
+			Items: []GuideItem{
+				itemFrom("women", "waist", "Waist", "Measure around your natural waistline where the skirt waistband will sit. Keep one finger of ease under the tape."),
+				itemFrom("women", "hips", "Hips", "Measure around the fullest part of your hips and seat, tape level all the way around."),
+				{Key: "skirt-length", Label: "Full length (skirt)", How: "From your waistline down the side to where you want the hem to fall (above knee, knee, midi or maxi).", InchRange: "14–45 in", Tip: "Measure while standing straight; note the shoe height you’ll wear."},
+				itemFrom("women", "thigh", "Thigh (for fitted styles)", "Around the fullest part of the thigh, just below the crotch. Helpful for pencil or fitted skirts."),
+			},
+		},
+		{
+			Slug:  "blouse-top",
+			Label: "Blouse / Top",
+			Blurb: "For blouses, peplum tops and fitted tops. Uses bust and upper-body measurements — no hips or full dress length needed.",
+			Items: []GuideItem{
+				itemFrom("women", "shoulder", "Shoulder", "Across the back from shoulder bone to shoulder bone."),
+				itemFrom("women", "bust", "Bust", "Around the fullest part of the bust, tape level and not tight."),
+				itemFrom("women", "waist", "Waist", "Around the natural waist — important for fitted or peplum tops."),
+				{Key: "bodice", Label: "Bodice length", How: "From the shoulder (near neck base) over the bust to the waistline, or to where you want the top to end for a peplum/crop.", InchRange: "13–24 in", Tip: "Tell us if you want the top to end at the waist, hip, or below."},
+				itemFrom("women", "sleeve", "Sleeve length", "From shoulder point to the sleeve end you want."),
+				itemFrom("women", "armhole", "Armhole", "Around the arm at the shoulder joint, under the armpit."),
+			},
+		},
+		{
+			Slug:  "shirt",
+			Label: "Shirt",
+			Blurb: "For men's and unisex shirts. Uses chest, shoulder, sleeve and shirt length — no hips, no bust/bodice dress measurements.",
+			Items: []GuideItem{
+				itemFrom("men", "neck", "Neck", "Around the base of the neck where a collar sits, leaving one finger of ease inside the tape."),
+				itemFrom("men", "chest", "Chest", "Around the fullest part of the chest, under the arms, tape level across the shoulder blades. Breathe normally."),
+				itemFrom("men", "shoulder", "Shoulder", "Across the back from one shoulder bone to the other."),
+				itemFrom("men", "sleeve", "Sleeve length", "From the shoulder point to the wrist bone, with the arm slightly bent."),
+				itemFrom("men", "shirt-length", "Shirt length", "From the base of the neck/shoulder down the front to where you want the hem (hip or tucked length)."),
+				itemFrom("men", "waist", "Waist (optional, for a fitted shirt)", "Around the natural waist if you want a tapered/slim fit."),
+			},
+		},
+		{
+			Slug:  "kaftan",
+			Label: "Kaftan",
+			Blurb: "For relaxed kaftans and boubous. The key measurements are shoulder, bust/chest, sleeve and full length so it drapes comfortably.",
+			Items: []GuideItem{
+				itemFrom("women", "shoulder", "Shoulder", "Across the back from shoulder bone to shoulder bone — this sets how the kaftan hangs."),
+				itemFrom("women", "bust", "Bust / Chest", "Around the fullest part of the bust/chest, relaxed. Kaftans need ease, so don’t pull the tape tight."),
+				itemFrom("men", "sleeve", "Sleeve length", "From the shoulder point to where you want the sleeve to end."),
+				itemFrom("men", "kaftan-length", "Full length", "From the shoulder down to the hem (knee, mid-calf or ankle)."),
+				itemFrom("women", "hips", "Hips (optional)", "Around the fullest part of the hips if you want the kaftan shaped rather than fully free-flowing."),
+			},
+		},
+		{
+			Slug:  "trousers",
+			Label: "Trousers",
+			Blurb: "For trousers and pants. Uses waist, hips, thigh and leg lengths — no bust, chest, bodice or sleeve measurements.",
+			Items: []GuideItem{
+				itemFrom("men", "waist", "Waist", "Around where you wear your waistband (natural waist or lower), tape comfortable."),
+				itemFrom("men", "hips", "Hips / Seat", "Around the fullest part of the hips and seat, tape level."),
+				itemFrom("men", "thigh", "Thigh", "Around the fullest part of the thigh, just below the crotch."),
+				itemFrom("men", "trouser-length", "Trouser length (outseam)", "From the waistband down the outside of the leg to the shoe/hem point."),
+				itemFrom("men", "inseam", "Inseam", "From the crotch seam down the inside of the leg to the ankle/hem. Easier with a helper or using a pair of trousers that fit well."),
+			},
+		},
+		{
+			Slug:  "children",
+			Label: "Children’s outfit",
+			Blurb: "For children’s dresses, sets and tops. We keep it simple and add a little growing room at the seams.",
+			Items: []GuideItem{
+				itemFrom("children", "age", "Age", "The child’s age in years — helps us allow growing room."),
+				itemFrom("children", "height", "Height", "Child standing straight against a wall, no shoes, measured from floor to top of head."),
+				itemFrom("children", "chest", "Chest", "Around the fullest part of the chest, under the arms, tape comfortably snug."),
+				itemFrom("children", "waist", "Waist", "Around the natural waist."),
+				itemFrom("children", "hips", "Hips (for dresses/skirts)", "Around the fullest part of the hips — include this for dresses and skirts; not needed for a simple top."),
+				itemFrom("children", "length", "Outfit length", "From the shoulder down to the hem you want."),
+			},
+		},
+	}
+}
+
+// GuideBySlug returns one garment guide, or the first if not found.
+func GuideBySlug(slug string) GarmentGuide {
+	gs := Guides()
+	for _, g := range gs {
+		if g.Slug == slug {
+			return g
+		}
+	}
+	return gs[0]
+}

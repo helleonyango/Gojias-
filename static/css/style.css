@@ -764,3 +764,61 @@ p { margin: 0 0 1rem; }
   .choice-grid, .choice-grid-tight, .choice-grid-fabric { grid-template-columns: 1fr 1fr; }
   .confirmation-actions .btn { width: 100%; }
 }
+
+/* How to measure (garment-aware, inches) */
+.page-hero-tight { padding-bottom: 0.5rem; }
+.narrow { max-width: 52rem; }
+.measure-guide-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+.measure-guide-aside { position: sticky; top: 5.5rem; }
+.aside-title { font-family: var(--serif, Georgia, serif); font-size: 1.1rem; margin: 0 0 .75rem; }
+.garment-picker { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; }
+.garment-chip {
+  display: inline-block; padding: .45rem .85rem; border-radius: 999px;
+  border: 1px solid var(--line, rgba(42,33,27,.15)); background: var(--paper, #fff);
+  color: var(--ink, #2a211b); text-decoration: none; font-size: .9rem;
+}
+.garment-chip:hover { border-color: var(--gold, #c9a227); }
+.garment-chip.is-active { background: var(--indigo, #2c2f5e); color: var(--cream, #fff8ef); border-color: var(--indigo, #2c2f5e); }
+.guide-tips-card {
+  background: var(--paper, #fff); border: 1px solid var(--line, rgba(42,33,27,.12));
+  border-radius: var(--radius, 12px); padding: 1rem 1.1rem; box-shadow: var(--shadow, none);
+}
+.guide-tips-card h3 { margin: 0 0 .5rem; font-size: 1rem; }
+.guide-tips-card ul { margin: 0 0 .75rem; padding-left: 1.1rem; }
+.guide-tips-card li { margin: .35rem 0; font-size: .92rem; }
+.guide-tips-card .muted { font-size: .88rem; color: var(--ink-soft, #6b5a4e); margin: 0; }
+.guide-head { margin-bottom: 1.25rem; }
+.guide-head h2 { margin: .1rem 0 .35rem; }
+.measure-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; counter-reset: mstep; }
+.measure-step {
+  display: flex; gap: 1rem; background: var(--paper, #fff);
+  border: 1px solid var(--line, rgba(42,33,27,.12)); border-radius: var(--radius, 12px);
+  padding: 1rem 1.1rem;
+}
+.measure-step::before {
+  counter-increment: mstep; content: counter(mstep);
+  flex: none; width: 2rem; height: 2rem; border-radius: 50%;
+  background: var(--gold-soft, #f3e6c8); color: var(--ink, #2a211b);
+  display: grid; place-items: center; font-weight: 600; font-size: .9rem; margin-top: .1rem;
+}
+.measure-step-body { flex: 1; min-width: 0; }
+.measure-step-top { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; margin-bottom: .25rem; }
+.measure-step-top h3 { margin: 0; font-size: 1.05rem; }
+.inch-badge {
+  display: inline-block; font-size: .78rem; font-weight: 600; letter-spacing: .01em;
+  color: var(--indigo, #2c2f5e); background: rgba(44,47,94,.08);
+  border: 1px solid rgba(44,47,94,.15); border-radius: 999px; padding: .15rem .55rem; white-space: nowrap;
+}
+.measure-step p { margin: .2rem 0 0; }
+.measure-tip { font-size: .9rem; color: var(--ink-soft, #6b5a4e); }
+.guide-cta { margin-top: 1.5rem; padding: 1.25rem; background: var(--cream-deep, #f7efe3); border-radius: var(--radius, 12px); }
+.guide-cta p { margin: 0 0 .75rem; }
+@media (max-width: 860px) {
+  .measure-guide-layout { grid-template-columns: 1fr; }
+  .measure-guide-aside { position: static; }
+}
