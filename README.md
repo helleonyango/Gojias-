@@ -29,8 +29,8 @@ Flags:
 go run . -addr :9000 -db ./data/gojias.db
 ```
 
-On first start the server creates `gojias.db`, applies the schema and seeds eight fabrics and
-seven designs. Restarting never duplicates the sample rows (seeding only runs when the fabrics
+On first start the server creates `gojias.db`, applies the schema and seeds thirteen fabrics and
+seventeen designs. Restarting never duplicates the sample rows (seeding only runs when the fabrics
 table is empty).
 
 ### Admin account
@@ -70,23 +70,42 @@ static/css/style.css     The whole theme
 static/css/admin.css     Dashboard layout, tables, forms and print rules
 static/js/main.js        Progressive enhancement (nav, gallery, filter auto-submit)
 static/js/order.js       Order wizard: steps, validation, unit conversion, estimate
-static/img/              Generated SVG placeholder art
+static/img/fabrics/      Fabric photography (real, from Kitenge Materials)
+static/img/designs/      Design photography (real, from Kitenge Materials/designs)
+static/img/hero.jpg      Homepage hero
+static/img/favicon.png   Site favicon
 uploads/                 Uploaded photos; served at /uploads/
 ```
 
 Templates and `static/` are embedded in the binary with `//go:embed`. The `uploads/` folder is
 read from disk so new images appear without a rebuild.
 
-## Replacing the placeholder images
+## Images
 
-Every fabric and design currently points at generated SVGs under
-`static/img/fabrics/<slug>-1..3.svg` and `static/img/designs/<slug>-1..3.svg`.
+There is no generated artwork left in the project — every image comes from the owner's
+`Kitenge Materials` folder.
 
-To use real photography:
+- **Fabrics**: `static/img/fabrics/<slug>.jpg` (13 bolts). All 14 fabric source photos are used;
+  the second fold of the paprika wave print is the second gallery image of that bolt
+  (`kitenge-paprika-wave-2.jpg`).
+- **Designs**: `static/img/designs/<slug>.jpg` (17 garments). All 17 photos from
+  `Kitenge Materials/designs/` are used as the design catalogue, with the 7 original slugs
+  preserved so existing orders still resolve.
+- **Hero**: `static/img/hero.jpg`, a 4:5 crop of the paprika wave bolt.
+- **Favicon**: `static/img/favicon.png`, a 64 px crop of the amber fan cloth.
+
+Images are resized on import (max ~1400 px for designs, 1200 px for fabrics) and saved as
+progressive JPEG.
+
+After replacing a file on disk, restart the server: `static/` is embedded in the binary with
+`//go:embed`, so a new build is needed for the asset to change. The `uploads/` folder is read
+from disk instead and picks up new files without a rebuild.
+
+To update the catalogue:
 
 1. The normal route is the dashboard: add or edit a fabric/design and upload photos.
 2. To change the seed data itself, edit the `Image` / `Images` values in
-   `internal/store/seed.go`, delete `gojias.db` and restart.
+   `internal/store/seed.go`, delete `gojias.db` (and `-wal`/`-shm`) and restart.
 
 ## Data model (stage 1)
 

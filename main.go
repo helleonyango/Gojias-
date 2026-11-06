@@ -304,7 +304,7 @@ func (a *App) fabrics(w http.ResponseWriter, r *http.Request) {
 	}
 	a.render(w, http.StatusOK, "fabrics", page{
 		Title:  title,
-		Desc:   "Browse kitenge, Ankara, lace and plain cotton fabrics at Gojias Collections. Prices per yard or metre in Kenyan shillings.",
+		Desc:   "Browse kitenge and Ankara print fabrics at Gojias Collections — real bolts, true colours. Prices per yard or metre in Kenyan shillings.",
 		Active: "fabrics",
 		Data: map[string]any{
 			"Fabrics":  fabrics,
@@ -595,6 +595,24 @@ func swatch(name string) string {
 		return "#6B2B2B"
 	case "brown":
 		return "#6B4A34"
+	case "red":
+		return "#B02A26"
+	case "black":
+		return "#211E1B"
+	case "lilac":
+		return "#C9B3D6"
+	case "magenta":
+		return "#A81E5C"
+	case "navy":
+		return "#1B2E4A"
+	case "green":
+		return "#3F6B4A"
+	case "pink":
+		return "#D98FA6"
+	case "yellow":
+		return "#D9A821"
+	case "blue":
+		return "#2B5C8A"
 	default:
 		return "#C8973B"
 	}

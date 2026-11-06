@@ -47,7 +47,7 @@
             <input type="radio" name="design" value="{{.Slug}}"
               {{if eq (get $.Data.Values "design") .Slug}}checked{{end}}>
             <span class="choice-body">
-              <img src="{{.Image}}" alt="{{.Name}} — {{.CategoryLabel}}" loading="lazy" width="300" height="375">
+              <img src="{{.Image}}" alt="{{.Name}} — {{.CategoryLabel}} design" loading="lazy" width="300" height="375">
               <span class="choice-kicker">{{.CategoryLabel}}</span>
               <strong>{{.Name}}</strong>
               <span class="choice-price">from {{money .PriceFrom}}</span>
